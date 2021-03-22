@@ -2,6 +2,8 @@
 
 一时兴起扒了[onlineimagetool](https://www.onlineimagetool.com/zh/compress-png-jpg-webp-gif)的图片压缩功能。
 
+体验(demo)网址：[点我](https://xiek881028.github.io/compress-png-jpg-webp-gif/)
+
 > 它采用了[webassembly](https://webassembly.org/)技术。浏览器已经开始部分支持，`node`在`v15.12.0`开始作为实验性内容支持。
 
 ## 与kuma-imagemin对比
