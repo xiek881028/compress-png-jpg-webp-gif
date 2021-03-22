@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>图片压缩</title>
+  </head>
+  <body>
+    <div>
+      压缩算法来源：<a
+        target="_blank"
+        href="https://www.onlineimagetool.com/zh/compress-png-jpg-webp-gif"
+        >onlineimagetool</a
+      >
+    </div>
+    <input type="file" id="input" />
+    <script src="imagemin.js"></script>
+    <script>
+      ImageCompressor.setStatusCallback(e => {
+        console.log('e: ', e);
+        if (e.processData.length) {
+          e.processData.map(item => {
+            if (item.status === 'done') {
+              const { size, blob } = item.output;
+              document.getElementById('min') && document.getElementById('min').remove();
+              document.getElementById('loading') && document.getElementById('loading').remove();
+              const div = document.createElement('div');
+              div.id = 'min';
+              const text = document.createTextNode(`压缩后大小：${(size / 1024).toFixed(2)}kb`);
+              const img = document.createElement('img');
+              img.src = URL.createObjectURL(blob);
+              img.width = 200;
+              div.appendChild(text);
+              div.appendChild(img);
+              document.body.appendChild(div);
+              ImageCompressor.reload();
+              document.getElementById('input').removeAttribute('disabled');
+            } else if (item.status === 'skipped') {
+              document.getElementById('min') && document.getElementById('min').remove();
+              document.getElementById('loading') && document.getElementById('loading').remove();
+              const div = document.createElement('div');
+              div.id = 'min';
+              const text = document.createTextNode(`压缩后体积更大或无变化，放弃压缩`);
+              document.body.appendChild(div);
+              div.appendChild(text);
+              ImageCompressor.reload();
+              document.getElementById('input').removeAttribute('disabled');
+            } else if ((item.status = 'preprocessed')) {
+              document.getElementById('input').setAttribute('disabled', true);
+              document.getElementById('loading') && document.getElementById('loading').remove();
+              const div = document.createElement('div');
+              div.id = 'loading';
+              const text = document.createTextNode(`正在压缩，请稍后...`);
+              document.body.appendChild(div);
+              div.appendChild(text);
+            }
+          });
+        }
+      });
+      document.querySelectorAll('input[type=file]').forEach(function (e) {
+        e.addEventListener('change', function () {
+          if (this.files && this.files.length > 0) {
+            for (var e = 0; e < this.files.length; e++) {
+              var t = this.files[e];
+              document.getElementById('origin') && document.getElementById('origin').remove();
+              document.getElementById('min') && document.getElementById('min').remove();
+              const div = document.createElement('div');
+              div.id = 'origin';
+              const text = document.createTextNode(`压缩前大小：${(t.size / 1024).toFixed(2)}kb`);
+              const img = document.createElement('img');
+              img.src = URL.createObjectURL(t);
+              img.width = 200;
+              div.appendChild(text);
+              div.appendChild(img);
+              document.body.appendChild(div);
+              ImageCompressor.addFileToQueue(t), ImageCompressor.callStatusCallback();
+            }
+            validateInputAndProcess();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
